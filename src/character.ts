@@ -12,10 +12,11 @@ export const character: Character = {
     // Core plugins first
     '@elizaos/plugin-knowledge',
     '@elizaos/plugin-sql',
+    '@elizaos/plugin-memory',
 
     // Text-only plugins (no embedding support)
     //...(process.env.ANTHROPIC_API_KEY?.trim() ? ['@elizaos/plugin-anthropic'] : []),
-    ...(process.env.OPENROUTER_API_KEY?.trim() ? ['@elizaos/plugin-openrouter'] : []),
+    //...(process.env.OPENROUTER_API_KEY?.trim() ? ['@elizaos/plugin-openrouter'] : []),
 
     // Embedding-capable plugins (optional, based on available credentials)
     //...(process.env.OPENAI_API_KEY?.trim() ? ['@elizaos/plugin-openai'] : []),
