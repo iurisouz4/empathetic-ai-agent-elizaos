@@ -7,6 +7,7 @@ This is the starter template for ElizaOS projects.
 - Pre-configured project structure for ElizaOS development
 - Comprehensive testing setup with component and e2e tests
 - Default character configuration with plugin integration
+- Mental Health Risk Evaluator plugin for assessing conversational risk levels.
 - Example service, action, and provider implementations
 - TypeScript configuration for optimal developer experience
 - Built-in documentation and examples
