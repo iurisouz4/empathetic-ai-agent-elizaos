@@ -1,123 +1,122 @@
-# Project Starter
+# Empathetic AI Agent - "mIA" on ElizaOS
 
-This is the starter template for ElizaOS projects.
+**An empathetic AI agent for mental health support, designed for children and adolescents and built on the extensible `elizaOS` framework.**
 
-## Features
+[![ElizaOS](https://img.shields.io/badge/built%20on-elizaOS-blue.svg)](https://github.com/eliza-os)
 
-- Pre-configured project structure for ElizaOS development
-- Comprehensive testing setup with component and e2e tests
-- Default character configuration with plugin integration
-- Mental Health Risk Evaluator plugin for assessing conversational risk levels.
-- Example service, action, and provider implementations
-- TypeScript configuration for optimal developer experience
-- Built-in documentation and examples
+---
+
+## Overview
+
+`empathetic-ai-agent-elizaos` is a project that embodies the creation of "mIA," an AI agent with a mission to provide a safe and supportive space for young individuals to express themselves. mIA is designed to be an empathetic listener, offering evidence-based coping strategies and identifying situations where professional help is needed.
+
+This project is not a replacement for professional medical advice but aims to be a first point of contact, a digital companion that can guide users toward the right resources in moments of need.
+
+## Key Features
+
+-   **Empathetic Persona**: "mIA" is crafted with a specific personality—empathetic, clear, and supportive. Her communication style is based on non-violent communication, emotional validation, and age-appropriate language.
+-   **Advanced Risk Evaluation**: A sophisticated `riskEvaluator` analyzes conversations in real-time to classify mental health risk as `low`, `medium`, or `high`. This system is built to be robust, incorporating caching, throttling, and a retry mechanism to handle API rate limits and temporary failures gracefully.
+-   **Crisis Management Protocol**: When the conversation contains keywords indicating a potential crisis (e.g., self-harm, abuse), the `crisisAction` is immediately triggered. This action provides the user with resources for immediate help, such as crisis hotlines, and can be configured to notify external systems via a webhook.
+-   **Knowledge Base Integration**: mIA's knowledge can be expanded with a local knowledge base of documents, allowing her to provide more specific and relevant information.
+-   **Extensible Plugin Architecture**: Built on `elizaOS`, the project is highly modular and extensible. New capabilities can be easily added through custom plugins, actions, and evaluators.
+
+## Technology Stack
+
+-   **Framework**: [elizaOS](https://github.com/eliza-os/eliza-os)
+-   **Language**: `TypeScript`
+-   **LLM Integration**: The project is configured to use Google's Generative AI (`@elizaos/plugin-google-genai`) but is also compatible with:
+    -   OpenAI
+    -   Anthropic
+    -   Ollama
+    -   OpenRouter
+-   **Frontend**: `React` for building custom UI panels for the agent.
+-   **Testing**:
+    -   `Bun`'s native test runner for fast component and integration tests.
+    -   `Cypress` for end-to-end testing scenarios.
+-   **Database**: `@elizaos/plugin-sql` for persistent memory and conversational history.
+
+## How it Works
+
+The agent's logic is orchestrated by `elizaOS`, with a core loop that involves receiving a message, evaluating it, selecting an action, and generating a response.
+
+1.  **Message Reception**: A new message from a user is received.
+2.  **Risk Evaluation**: The `riskEvaluator` is one of the first components to process the message. It analyzes the conversation history and the latest message to determine a risk level.
+3.  **Action Selection**: Based on the content of the message and the result of the evaluators, the agent decides which action to take. For example:
+    -   If crisis-related keywords are detected, the `crisisAction` is triggered.
+    -   In other cases, the agent might decide to simply reply, using its LLM integration to generate an empathetic and helpful response based on its persona and system prompt.
+4.  **Response Generation**: The selected action is executed, and a response is generated and sent back to the user.
+5.  **Memory**: The conversation is saved to the database, allowing the agent to have context in future interactions.
+
+## Project Structure
+
+```
+├── src
+│   ├── plugins
+│   │   └── mental-health      # Core logic for the agent's mental health capabilities
+│   │       ├── riskEvaluator.ts # The risk evaluation logic
+│   │       ├── crisisAction.ts  # The crisis management action
+│   │       └── index.ts         # The mental health plugin definition
+│   ├── __tests__              # Unit, integration, and e2e tests
+│   ├── frontend               # React components for the agent's UI panels
+│   ├── character.ts           # Definition of mIA's persona, style, and system prompt
+│   └── index.ts               # Main project entry point, agent and plugin registration
+├── docs                     # Folder for the knowledge base documents
+├── package.json             # Project dependencies and scripts
+└── README.md                # You are here!
+```
 
 ## Getting Started
 
-```bash
-# Create a new project
-elizaos create -t project my-project
-# Dependencies are automatically installed and built
+### Prerequisites
 
-# Navigate to the project directory
-cd my-project
+-   [Bun](https://bun.sh/) installed on your machine.
+-   API keys for the desired LLM provider (e.g., `GOOGLE_GENERATIVE_AI_API_KEY`) set up in a `.env` file. You can use the `.env.example` as a template.
 
-# Start development immediately
-elizaos dev
-```
+### Installation and Running
 
-## Development
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository-url>
+    cd empathetic-ai-agent-elizaos
+    ```
 
-```bash
-# Start development with hot-reloading (recommended)
-elizaos dev
+2.  **Install dependencies:**
+    The `elizaos` CLI handles this automatically when you run a command for the first time, but you can also do it manually.
+    ```bash
+    bun install
+    ```
 
-# OR start without hot-reloading
-elizaos start
-# Note: When using 'start', you need to rebuild after changes:
-# bun run build
+3.  **Run the development server:**
+    This command will start the agent with hot-reloading.
+    ```bash
+    bunx elizaos dev
+    ```
 
-# Test the project
-elizaos test
-```
+The agent will be running, and you can interact with it through the interfaces provided by `elizaOS`.
 
-## Testing
+## Development & Testing
 
-ElizaOS employs a dual testing strategy:
+### Development
 
-1. **Component Tests** (`src/__tests__/*.test.ts`)
+-   **`bunx elizaos dev`**: Starts the development server with hot-reloading. This is the recommended way to work on the project.
+-   **`bunx elizaos start`**: Starts the server without hot-reloading. You will need to rebuild the project (`bun run build`) after making changes.
 
-   - Run with Bun's native test runner
-   - Fast, isolated tests using mocks
-   - Perfect for TDD and component logic
+### Testing
 
-2. **E2E Tests** (`src/__tests__/e2e/*.e2e.ts`)
-   - Run with ElizaOS custom test runner
-   - Real runtime with actual database (PGLite)
-   - Test complete user scenarios
+The project has a comprehensive testing setup.
 
-### Test Structure
+-   **Run all tests:**
+    ```bash
+    bun test
+    ```
+-   **Run only component/integration tests:**
+    ```bash
+    bun test:component
+    ```
+-   **Run only end-to-end tests:**
+    ```bash
+    bun test:e2e
+    ```
 
-```
-src/
-  __tests__/              # All tests live inside src
-    *.test.ts            # Component tests (use Bun test runner)
-    e2e/                 # E2E tests (use ElizaOS test runner)
-      project-starter.e2e.ts  # E2E test suite
-      README.md          # E2E testing documentation
-  index.ts               # Export tests here: tests: [ProjectStarterTestSuite]
-```
-
-### Running Tests
-
-- `elizaos test` - Run all tests (component + e2e)
-- `elizaos test component` - Run only component tests
-- `elizaos test e2e` - Run only E2E tests
-
-### Writing Tests
-
-Component tests use bun:test:
-
-```typescript
-// Unit test example (__tests__/config.test.ts)
-describe('Configuration', () => {
-  it('should load configuration correctly', () => {
-    expect(config.debug).toBeDefined();
-  });
-});
-
-// Integration test example (__tests__/integration.test.ts)
-describe('Integration: Plugin with Character', () => {
-  it('should initialize character with plugins', async () => {
-    // Test interactions between components
-  });
-});
-```
-
-E2E tests use ElizaOS test interface:
-
-```typescript
-// E2E test example (e2e/project.test.ts)
-export class ProjectTestSuite implements TestSuite {
-  name = 'project_test_suite';
-  tests = [
-    {
-      name: 'project_initialization',
-      fn: async (runtime) => {
-        // Test project in a real runtime
-      },
-    },
-  ];
-}
-
-export default new ProjectTestSuite();
-```
-
-The test utilities in `__tests__/utils/` provide helper functions to simplify writing tests.
-
-## Configuration
-
-Customize your project by modifying:
-
-- `src/index.ts` - Main entry point
-- `src/character.ts` - Character definition
+---
+This project is a starting point for building sophisticated, empathetic AI agents. Feel free to expand on it, add new plugins, and refine mIA's capabilities.
