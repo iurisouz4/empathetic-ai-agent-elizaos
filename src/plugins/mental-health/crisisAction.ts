@@ -1,8 +1,8 @@
-import { Memory, type Action, type ActionResult } from '@elizaos/core';
-import { elizaLogger } from '@elizaos/core';
+import { Memory, type Action, type ActionResult, elizaLogger, type IAgentRuntime } from '@elizaos/core';
+import { crisisEventsTable } from '../../db/schema';
 
 const triggerWebhook = async (message: Memory) => {
-  const response = await fetch('https://webhook-test.com/827a62672eb539123b7fd712ba63389e', {
+  await fetch('https://webhook-test.com/827a62672eb539123b7fd712ba63389e', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -15,11 +15,20 @@ const triggerWebhook = async (message: Memory) => {
 export const crisisAction: Action = {
   name: 'CRISIS_ACTION',
   description: 'Orienta o usuário a procurar ajuda imediata em situação de crise.',
-  validate: async (_runtime, message) => {
-    const txt = (message?.content?.text || '').toLowerCase();
-    return /suicid|autoagress|autoles|crise|emerg|perigo|matar|me machucar|me ferir/.test(txt);
+  validate: async () => {
+    return true;
   },
-  handler: async (_runtime, message): Promise<ActionResult> => {
+  handler: async (runtime: IAgentRuntime, message): Promise<ActionResult> => {
+    try {
+      // Log the event using the db object from the runtime.
+      // The schema has default values for id and triggeredAt, so we can insert an empty object.
+      await runtime.db.insert(crisisEventsTable).values({});
+      elizaLogger.info('CRISIS_ACTION: Event logged to database.');
+    } catch (error) {
+      elizaLogger.error('CRISIS_ACTION: Failed to log event to database.', error);
+      // Do not block the crisis response due to a logging error
+    }
+
     const locationNote =
       'Se estiver no Brasil, ligue 188 (CVV) ou acesse https://cvv.org.br . ' +
       'Se estiver fora, procure o número local de prevenção ao suicídio ou serviços de emergência.';
